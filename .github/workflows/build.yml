@@ -2,8 +2,7 @@ name: Build simc.exe
 
 on:
   push:
-    branches:
-      - midnight
+    branches: [ midnight ]
   workflow_dispatch:
 
 jobs:
@@ -11,29 +10,27 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-        with:
-          submodules: recursive
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
       - name: Setup CMake
         uses: jwlawson/actions-setup-cmake@v2
         with:
           cmake-version: "latest"
 
-      - name: Setup VS environment
+      - name: Setup MSVC Env
         uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: x64
 
-      - name: Configure with CMake
+      - name: Configure CMake
         run: |
           cmake -B build -S . -G "Ninja" -DCMAKE_BUILD_TYPE=Release
 
-      - name: Build simc
+      - name: Build
         run: cmake --build build --config Release --target simc
 
-      - name: Upload artifact
+      - name: Upload artifact (exe)
         uses: actions/upload-artifact@v4
         with:
           name: simc-exe
