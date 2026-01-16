@@ -12,22 +12,24 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - name: Setup CMake
         uses: jwlawson/actions-setup-cmake@v2
         with:
           cmake-version: "latest"
 
-      - name: Setup MSVC Env
+      - name: Setup MSVC Dev Env
         uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: x64
 
-      - name: Configure CMake
+      - name: Configure CMake (no GUI)
         run: |
-          cmake -B build -S . -G "Ninja" -DCMAKE_BUILD_TYPE=Release
+          cmake -B build -S . -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DBUILD_GUI=OFF
 
-      - name: Build
+      - name: Build simc
         run: cmake --build build --config Release --target simc
 
       - name: Upload artifact (exe)
