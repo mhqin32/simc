@@ -1,8 +1,8 @@
-name: Build SimulationCraft exe
+name: Build simc.exe
+
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
@@ -10,7 +10,7 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout code
+      - name: Check out repository
         uses: actions/checkout@v3
         with:
           submodules: recursive
@@ -24,17 +24,15 @@ jobs:
           cmakeVersion: "latest"
 
       - name: Configure build
-        working-directory: ${{ github.workspace }}
         run: |
           cmake -S . -B build -G "Visual Studio 17 2022" -A x64
 
       - name: Build simc.exe
-        working-directory: ${{ github.workspace }}
         run: |
           cmake --build build --config Release --target simc
 
-      - name: Upload build artifact
+      - name: Upload simc.exe artifact
         uses: actions/upload-artifact@v3
         with:
-          name: simc-executable
+          name: simc-exe
           path: build/Release/simc.exe
