@@ -1,9 +1,8 @@
-name: Build simc.exe (CLI only)
+name: Build simc.exe
 
 on:
   push:
-    branches:
-      - midnight
+    branches: [ midnight ]
   workflow_dispatch:
 
 jobs:
@@ -11,50 +10,32 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      # 1. 拉代码（含 submodules）
-      - name: Checkout repository
+      - name: Checkout repo
         uses: actions/checkout@v4
         with:
           submodules: recursive
 
-      # 2. 安装 CMake
       - name: Setup CMake
         uses: jwlawson/actions-setup-cmake@v2
         with:
           cmake-version: "latest"
 
-      # 3. 初始化 MSVC 编译环境
       - name: Setup MSVC Dev Environment
         uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: x64
 
-      # 4. CMake 配置（关键：关闭 GUI / Qt）
-      - name: Configure CMake (no GUI, no Qt)
+      - name: Configure CMake (no GUI)
         run: |
-          cmake -S . -B build ^
-            -G Ninja ^
-            -DCMAKE_BUILD_TYPE=Release ^
-            -DBUILD_GUI=OFF
+          cmake -B build -S . -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DBUILD_GUI=OFF
 
-      # 5. 编译 simc
-      - name: Build simc
-        run: |
-          cmake --build build --target simc
+      - name: Build simc.exe
+        run: cmake --build build --config Release --target simc
 
-      # 6. 调试：列出 build 目录（确保能看到 simc.exe）
-      - name: List build outputs
-        run: |
-          echo "===== build directory ====="
-          dir build
-          echo "===== recursive ====="
-          dir build /s
-
-      # 7. 上传所有 exe（防止路径不一致）
       - name: Upload simc.exe artifact
         uses: actions/upload-artifact@v4
         with:
-          name: simc-exe
+         name: simc-exe
           path: |
             build/simc.exe
             build/**/*.exe
