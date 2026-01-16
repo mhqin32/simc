@@ -37,4 +37,5 @@ jobs:
         with:
           name: simc-exe
           path: |
-          
+            build/simc.exe
+            build/**/*.exe
