@@ -1,6 +1,5 @@
 name: Build SimulationCraft exe
-on:
-  workflow_call:
+
 
 on:
   push:
